@@ -7,8 +7,8 @@
 *This macro analyses different parameters of images containing 1 rosette of Arabidopsis thaliana
 *(should work with other species). The macro requires as input a directory containing the 
 *images (RGB with tiff or jpg extension) and the threshold method to use for segmentation.
-*The output of the macro is the generation of 4 directories within the directory containing the
-*images, "green_images" contains the splitted green channel images from the RGB images, "red_images"
+*The macros generates 4 directories within the directory containing the
+*images: "green_images" contains the splitted green channel images from the RGB images, "red_images"
 *contains the splitted red channel images from the RGB images, "binary_images",
 *contains the thresholded "based on green images", "analyzed_images" contain the binaries of the selected objects
 *for the "Analysis Particles" analysis (allow to vizualize whether the selection was made properly or not).

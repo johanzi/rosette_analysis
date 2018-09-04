@@ -20,11 +20,15 @@
 */
 
 macro "Rosette analysis"{   
-    Dialog.create("Dialog Windows");
+    source_folder="T:\\dep_coupland\\grp_hancock\\Manu\\Pictures\\test_weka\\"
+	source_classifier="T:\\dep_coupland\\grp_hancock\\Manu\\Pictures\\classifier.model_second.model"
+
+    
+    //Dialog.create("Dialog Windows");
    
-    source_folder = getDirectory("Select source directory:");
+    //source_folder = getDirectory("Select source directory:");
    
-    source_classifier = File.openDialog("Select classifier:");
+    //source_classifier = File.openDialog("Select classifier:");
  
 	//Get Date and time of the system
 	function get_time() {
@@ -48,7 +52,7 @@ macro "Rosette analysis"{
     // Defined whether the filename provided contains either of the extensions
     // defined in 'extensions' array
     function isImage(filename) {
-        extensions = newArray("jpg", "tiff","tif");
+        extensions = newArray("jpg", "tiff","tif","JPG");
         result = false;
         for (i=0; i<extensions.length; i++) {
             if (endsWith(toLowerCase(filename), "." + extensions[i]))
@@ -95,13 +99,15 @@ macro "Rosette analysis"{
         
     // Segment images using Weka deep learning
     // "binary_images" directory
-    function segment_rosette(source_folder, source_classifier){
-        list_source = getFileList(source_folder);
+       function segment_rosette(source_folder, source_classifier){
+        list_source = getFileList(source_folder+File.separator+"images"+File.separator);
 		// Open first image
 		source = list_source[0];
-		open(source_folder+source);
-		
-		// Launch Weka with properly trained classifier (cannot be launched if no images are opened)
+		if (isImage(source)){
+			open( source_folder+File.separator+"images"+File.separator+source);
+		}
+
+				// Launch Weka with properly trained classifier (cannot be launched if no images are opened)
 		run("Trainable Weka Segmentation");
 		// wait for the plugin to load
 		wait(3000);
@@ -115,7 +121,7 @@ macro "Rosette analysis"{
 	
 		// The name of the result is different than when "Apply classifier" is used
 		selectWindow("Classified image");
-		saveAs("Tiff", source_folder+binary_images+source);
+		saveAs("Tiff", source_folder+File.separator+"weka_images"+File.separator+source);
 		// Close result image
 		run("Close");
 	
@@ -131,18 +137,47 @@ macro "Rosette analysis"{
 			source = list_source[i];
 			if (isImage(source)){
 				// Run weka, this time calling the image from Weka directly (no need to open it in ImageJ first)
-				call("trainableSegmentation.Weka_Segmentation.applyClassifier", source_folder+accession+File.separator+"_max_projection", source, "showResults=true", "storeResults=false", "probabilityMaps=false", "");
+				call("trainableSegmentation.Weka_Segmentation.applyClassifier", source_folder+File.separator+"images", source, "showResults=true", "storeResults=false", "probabilityMaps=false", "");
 				// Select and save result image
 				selectWindow("Classification result");
-				saveAs("Tiff",  source_folder+binary_images+source);
+				saveAs("Tiff", source_folder+File.separator+"weka_images"+File.separator+source);
 				run("Close");
 				selectWindow(source);
 			    run("Close");
 			}
 		}
-		setBatchMode(false);        
-    }
+		setBatchMode(false);      
+	
+      }
+
     
+	
+	// Get binaries from weka segmentation
+	function get_binary(source_folder){
+		weka_folder = source_folder+File.separator+"weka_images";
+		list_source = getFileList(weka_folder); //variable defined previously
+		setBatchMode(true);
+		for (i=0; i < list_source.length; i++){
+			// Get name of the image
+			source = list_source[i];
+			if (isImage(source)){
+				open(weka_folder+File.separator+source);
+				imageA = getImageID();
+				run("Threshold...");
+				setThreshold(1, 1);
+				setOption("BlackBackground", false);
+				run("Convert to Mask"); //Make a binary
+				saveAs("Tiff", weka_folder+File.separator+"_binary_CCs"+File.separator+source);
+				run("Close All");
+			}
+		}
+		setBatchMode(true);
+		closeAll();//Close all windows
+	}
+	
+	
+	
+	
     // Analyze particles binary images in "binary_images" directory and extract 
     // pixel information from the "green images" in "green_images" directory.
     // Generates a binary image from the particles analyzed and save it in 
@@ -176,6 +211,8 @@ macro "Rosette analysis"{
     
  
     // Create directories
+	File.makeDirectory(source_folder+File.separator+"weka_images"+File.separator);
+	
     File.makeDirectory(source_folder+File.separator+"green_images"+File.separator);
     
     File.makeDirectory(source_folder+File.separator+"red_images"+File.separator);
@@ -195,10 +232,12 @@ macro "Rosette analysis"{
     // Extract red channel
     extract_color(source_folder, "red");
  
-  
     // Extract green channel
     extract_color(source_folder, "green");
     
+	// Extract binaries from weka segmented images
+	get_binary(source_folder);
+	
     // Analysis from red channel images
     particle_analysis(source_folder, "red");
     
