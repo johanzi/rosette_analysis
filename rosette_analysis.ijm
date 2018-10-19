@@ -1,5 +1,3 @@
-
-
 /**
 *AUTHOR : Johan Zicola
 *DATE: 2018-01-31
@@ -9,19 +7,19 @@
 *(should work with other species). The macro requires as input a directory containing the 
 *images (RGB with tiff or jpg extension). Different directories are generated:
 * "binary_images", contains the thresholded images
-* 
-*At last, the "results" directory contains txt files (tab-separated values) which contains the results of 
-*the analysis for each image (in red and green channels). Ideally only 1 value per file should be present 
-* (rosette identified as a single object) but some leaves can be identified as separate objects due 
-* to unproper thresholding. In this case, one needs to pay attention to how analyzing the results 
-* (area should be summed, mean average should be averaged, and so on).
+* "red_images" and "green_images" which contain red and green RGB channels, respectively
+* the "results" directory contains txt files (tab-separated values) which contains the results of 
+*the analysis for each image (in red and green channels)
+*
+* This macro requires as input the directory containing the images to analyze (RGB images in JPG or TIFF format)
+* The segmentator generated with SIOX: Simple Interactive Object Extraction plugin (see README.md for protocol)
 */
 
 macro "Rosette analysis"{   
-    Dialog.create("Dialog Windows");
-   
-    source_folder = getDirectory("Select source directory:");
 
+    // Generate GUI for user input
+    Dialog.create("Dialog Windows");
+    source_folder = getDirectory("Select source directory:");
 	segmentator = File.openDialog("Select the segmentator:");
     
 	//Get Date and time of the system
@@ -40,7 +38,6 @@ macro "Rosette analysis"{
 	     TimeString = TimeString+second;
 	     print(TimeString);
 	}
-
 
 
     // Defined whether the filename provided contains either of the extensions
@@ -88,26 +85,26 @@ macro "Rosette analysis"{
         }
     }
 
-function rosette_segmentation(source_folder){
-	list_source = getFileList(source_folder);
-    setBatchMode(true);
-    for (i=0; i < list_source.length; i++){
-        source = list_source[i];
-        if (isImage(source)){
-
-			open(source_folder+File.separator+source);
-        	
-  		 	// Open SIOX and perform segmentation of the open image using
-	    	// the segmentator previously trained by the user
-	    	run("Apply saved SIOX segmentator", "browse="+segmentator+" siox="+segmentator);
-	    	// Save binary file generated
-	    	saveAs("Tiff",source_folder+File.separator+"binary_images"+File.separator+source);
-	    	//close();
-	    	run("Close All");
-        }
-    }
-   setBatchMode(false);
-}
+	// rosette segmentation step using SIOX: Simple Interactive Object Extraction plugin
+	function rosette_segmentation(source_folder){
+		list_source = getFileList(source_folder);
+	    setBatchMode(true);
+	    for (i=0; i < list_source.length; i++){
+	        source = list_source[i];
+	        if (isImage(source)){
+				// Open image
+				open(source_folder+File.separator+source);
+	        	// Open SIOX and perform segmentation of the open image using
+		    	// the segmentator previously trained by the user
+		    	run("Apply saved SIOX segmentator", "browse="+segmentator+" siox="+segmentator);
+		    	// Save binary file generated
+		    	saveAs("Tiff",source_folder+File.separator+"binary_images"+File.separator+source);
+		    	//close();
+		    	run("Close All");
+	        }
+	    }
+	   setBatchMode(false);
+	}
     
    
     // Analyze particles binary images in "binary_images" directory and extract 
@@ -131,28 +128,19 @@ function rosette_segmentation(source_folder){
             open(source_folder+File.separator+"binary_images"+File.separator+binary);
             run("Set Measurements...", "area mean standard min kurtosis area_fraction redirect="+title+" decimal=3");
             run("Analyze Particles...", "show=Masks display exclude clear summarize add");
-            saveAs("Tiff",source_folder+File.separator+"analysed_images"+File.separator+source);
             selectWindow("Results");
             saveAs("Results", source_folder+File.separator+"results"+File.separator+source+"_"+color+"_Results.txt");
             run("Close All");
         }
         setBatchMode(false);
 }
-
-
     
  
     // Create directories
     File.makeDirectory(source_folder+File.separator+"binary_images"+File.separator);
-    
     File.makeDirectory(source_folder+File.separator+"results");
-
-    File.makeDirectory(source_folder+File.separator+"green_images"+File.separator);
-    
+	File.makeDirectory(source_folder+File.separator+"green_images"+File.separator);
     File.makeDirectory(source_folder+File.separator+"red_images"+File.separator);
-
-    File.makeDirectory(source_folder+File.separator+"analysed_images"+File.separator);
-
 
     // launch function
 
