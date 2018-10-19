@@ -15,26 +15,36 @@ The user needs first to create a segmentator for a given dataset of images. To d
 * Open one representative image of the dataset in ImageJ
 * Go to Plugins > Segmentation > SIOX: Simple Interactive Object Extraction plugin
 * The opened image should now appear in the SIOX Segmentation GUI
+
 ![](images/tuto1.JPG?raw=true)
+
 * The 'Foreground' button should already on select mode. Select a part of the plant with one of the selection tool of ImageJ (rectangle as default)
-![](images/tuto2.JPG?raw=true)
 * Click on 'Background' and select a part of the background (substrate the plant is growing in). The foreground selection (plant) should appear now in green
+
+![](images/tuto2.JPG?raw=true)
+
 * Click to 'Segment'. If the segmentation is not correct, use the 'Detail Refinement Brush' and subtract or add elements that where classified incorrectly as background or foreground
+
 ![](images/tuto3.JPG?raw=true)
+
 * Click on *Create Mask* to see how the binary image looks like. If OK, proceed with next step
-* Click on 'Save segmentator' and save in the directory containing the images (or in a parent directory if needed to be used for multiple directory). *It does not matter where the segmentator is as long as you reming the place for the next step* 
+* Click on 'Save segmentator' and save in the directory containing the images (or in a parent directory if needed to be used for multiple directory). *It does not matter where the segmentator is but it goes faster to keep it in the same directory than the images for the next steps* 
 
 ### Batch analysis
 
-Once the segmentator is generator, the analysis in batch can start. For this, be sure all your images for a specific genotype are in one directory. Note where your segmentator file (extension .siox) is located.
+Once the segmentator is created, the analysis in batch can start. For this, be sure all that your images for a specific genotype are in one directory. Note where your segmentator file (extension .siox) is located.
 
 * Copy the ImageJ macro macro_rosette_analysis.ijm into ImageJ/plugins/Macros 
 * Restart ImageJ
 * Go to 'Plugins > Macros > rosette analysis'
 * The macro should request the 'source directory' containing the images, then the segmentator
-* The analysis should start. Avoid touching the keyboard during the analysis
-* Once performed, new directories should appear and a log file containing information about the run
-* Open 'binary_images' directory and verify whether the segmentation was properly performed (rosette clearly delimited)
+* The analysis should start. Avoid touching the keyboard during the analysis as it can interrupt the parts of the script that are not performed in BatchMode
+* Once performed, new directories and a log file containing information about the run should appear
+* Open 'binary_images' directory and verify whether the segmentation was properly performed (rosette clearly delimited). *At that point, if the rosette were not properly segmented, either the segmentator was not properly created (go back to 'Create a segmentator' section, or perhaps the background/plants between your images are too different to be segmented with the same segmentator (a manual segmentation image by image with SIOX plugin is then necessary)
+
+The content of the directory should look like this after analysis:
+
+![](images/tuto4.JPG?raw=true)
 
 *Details on the image analysis:* The binary images will allow to extract values of pixels in the red and green images. 
 The two colors yellow and green correspond to the following RGB values (in 8-bit scale):
@@ -47,4 +57,14 @@ Therefore, the ratio of green/red should decrease with the amount of green (corr
 ### Result Parsing
 
 Manu you have the mic! 
+
+
+
+## Authors
+
+* **Johan Zicola**
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
