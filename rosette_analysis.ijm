@@ -1,4 +1,5 @@
 
+
 /**
 *AUTHOR : Johan Zicola
 *DATE: 2018-01-31
@@ -6,10 +7,9 @@
 *INFORMATION:
 *This macro analyses different parameters of images containing 1 rosette of Arabidopsis thaliana
 *(should work with other species). The macro requires as input a directory containing the 
-*images (RGB with tiff or jpg extension) 
-* "binary_images",
-*contains the thresholded "based on green images", "analyzed_images" contain the binaries of the selected objects
-*for the "Analysis Particles" analysis (allow to vizualize whether the selection was made properly or not).
+*images (RGB with tiff or jpg extension). Different directories are generated:
+* "binary_images", contains the thresholded images
+* 
 *At last, the "results" directory contains txt files (tab-separated values) which contains the results of 
 *the analysis for each image (in red and green channels). Ideally only 1 value per file should be present 
 * (rosette identified as a single object) but some leaves can be identified as separate objects due 
@@ -22,7 +22,7 @@ macro "Rosette analysis"{
    
     source_folder = getDirectory("Select source directory:");
 
-	segmentator = File.openDialog("Choose the segmentator:");
+	segmentator = File.openDialog("Select the segmentator:");
     
 	//Get Date and time of the system
 	function get_time() {
@@ -130,7 +130,7 @@ function rosette_segmentation(source_folder){
             rename(title);
             open(source_folder+File.separator+"binary_images"+File.separator+binary);
             run("Set Measurements...", "area mean standard min kurtosis area_fraction redirect="+title+" decimal=3");
-            run("Analyze Particles...", "size=5000-Infinity show=Masks display exclude clear summarize add");
+            run("Analyze Particles...", "show=Masks display exclude clear summarize add");
             saveAs("Tiff",source_folder+File.separator+"analysed_images"+File.separator+source);
             selectWindow("Results");
             saveAs("Results", source_folder+File.separator+"results"+File.separator+source+"_"+color+"_Results.txt");
