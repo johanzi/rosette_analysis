@@ -11,7 +11,11 @@ Perform segmentation of RGB images of Arabidopsis rosettes and calculate values 
 
 ### Create a segmentator
 The segmentation of the rosette is performed using [SIOX: Simple Interactive Object Extraction plugin](https://imagej.net/SIOX:_Simple_Interactive_Object_Extraction).
-The user needs first to create a segmentator for a given dataset of images. To do this:
+
+The segmentator [segmentator.siox](test/segmentator.siox) located in the `test/` directory was created for *A. thaliana* leaves and can directly be used in the [batch analysis](#batch-analysis) step. Nonetheless, it may be suboptimal for your specific phenotype. You can therefore create your own segmentator using the following steps: 
+
+Create a segmentator for a given dataset of images:
+
 * Open one representative image of the dataset in ImageJ
 * Go to Plugins > Segmentation > SIOX: Simple Interactive Object Extraction plugin
 * The opened image should now appear in the SIOX Segmentation GUI
@@ -30,11 +34,12 @@ The user needs first to create a segmentator for a given dataset of images. To d
 * Click on *Create Mask* to see how the binary image looks like. If OK, proceed with next step
 * Click on 'Save segmentator' and save in the directory containing the images (or in a parent directory if needed to be used for multiple directory). *It does not matter where the segmentator is but it goes faster to keep it in the same directory than the images for the next steps* 
 
+
 ### Batch analysis
 
 Once the segmentator is created, the analysis in batch can start. For this, be sure all that your images for a specific genotype are in one directory. Note where your segmentator file (extension .siox) is located.
 
-* Copy the ImageJ macro macro_rosette_analysis.ijm into ImageJ/plugins/Macros 
+* Copy the ImageJ macro [macro_rosette_analysis.ijm](macro_rosette_analysis.ijm) into ImageJ/plugins/Macros 
 * Restart ImageJ
 * Go to 'Plugins > Macros > rosette analysis'
 * The macro should request the 'source directory' containing the images, then the segmentator
@@ -57,6 +62,10 @@ Therefore, the ratio of green/red should decrease with the amount of green (corr
 ### Result Parsing
 
 Manu you have the mic! 
+
+
+## Toy dataset
+Download the test directory which contains 10 images of Arabidopsis and the corresponding segmentator file (as a checkup in case the one you generate does not work).
 
 
 
