@@ -127,7 +127,7 @@ python ./MacroRosetteAnalysis.py
 * SD_YELLOW_Calibrator_Yellow = standard deviation of R value for the yellow calibrator
 
 ## Toy dataset
-You can already try test the macro with the 8 images of Arabidopsis provided (as a checkup in case the one you generate does not work).
+You can already test the plugin with the 8 images of Arabidopsis provided (as a checkup in case the one you generate does not work). Not that the pictures to analyze should be located in the same folder as the segmentator and the python script MacroRosetteAnalysis.py. In this case, just move jpg images from the test folder to the parent folder before running the plugin.
 
 
 
