@@ -75,7 +75,7 @@ Select a part of the background.
 
 Once the segmentators are created, the analysis in batch can start. For this, be sure that all your images are in same directory. Note where your segmentator file (extension .siox) is located.
 
-* Copy the ImageJ macro [Rosette_Analysis.ijm](Rosette_Analysis.ijm]) into ImageJ/plugins
+* Copy the ImageJ macro [Rosette_Analysis.ijm](Rosette_Analysis.ijm) into ImageJ/plugins
 * Restart ImageJ
 * Go to 'Plugins > rosette analysis'
 * The macro should request the 'source directory' containing the images, then the segmentator
